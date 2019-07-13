@@ -382,6 +382,10 @@ define([
         if (firstWeekday < 0) {
           firstWeekday += context.settings.weeks.length;
         }
+          
+        if (lastWeekday < 0) {
+          lastWeekday += context.settings.weeks.length;
+        }
 
         const $unitList = [], currentFormat = [
             local.current[0] === null ? null : local.current[0].format('YYYY-MM-DD'),
@@ -690,8 +694,11 @@ define([
             }
           });
         }
+          
+        var fullDays = local.dateManager.lastDay + firstWeekday + (context.settings.weeks.length - lastWeekday - 1);
+        var weeksLength = (fullDays > (context.settings.weeks.length * 5) ) ? context.settings.weeks.length * 6 : context.settings.weeks.length * 5;
 
-        for (let i = lastWeekday + 1; $unitList.length < context.settings.weeks.length * 5; i++) {
+        for (let i = lastWeekday + 1; $unitList.length < weeksLength; i++) {
           if (i < 0) {
             i = global.languages.weeks.en.length - i;
           }
@@ -707,7 +714,7 @@ define([
               $row.appendTo($calendarBody);
             }
 
-            if (i + 1 < $unitList.length) {
+            if (i + 1 < $unitList.length || (i % context.settings.weeks.length) == 0) {
               $row = $(helper.format('<div class="{0}"></div>', helper.getSubClass('row')));
             }
           }
